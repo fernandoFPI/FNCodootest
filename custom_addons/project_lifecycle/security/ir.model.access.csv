@@ -1,0 +1,10 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_project_lifecycle_user,project.lifecycle user,model_project_lifecycle,project_lifecycle.group_user,1,1,1,0
+access_project_lifecycle_admin,project.lifecycle admin,model_project_lifecycle,project_lifecycle.group_admin,1,1,1,1
+access_project_lifecycle_history_user,project.lifecycle.history user,model_project_lifecycle_history,project_lifecycle.group_user,1,1,1,0
+access_project_lifecycle_history_admin,project.lifecycle.history admin,model_project_lifecycle_history,project_lifecycle.group_admin,1,1,1,1
+access_project_lifecycle_invoice_user,project.lifecycle.invoice user,model_project_lifecycle_invoice,project_lifecycle.group_user,1,1,1,0
+access_project_lifecycle_invoice_admin,project.lifecycle.invoice admin,model_project_lifecycle_invoice,project_lifecycle.group_admin,1,1,1,1
+access_project_lifecycle_invoice_finance,project.lifecycle.invoice finance,model_project_lifecycle_invoice,project_lifecycle.group_finance,1,1,1,0
+access_assign_team_wizard_user,assign.team.wizard user,model_assign_team_wizard,project_lifecycle.group_user,1,1,1,1
+access_transition_wizard_user,transition.wizard user,model_transition_wizard,project_lifecycle.group_user,1,1,1,1

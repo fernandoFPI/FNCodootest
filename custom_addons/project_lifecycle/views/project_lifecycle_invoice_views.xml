@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_project_lifecycle_invoice_list" model="ir.ui.view">
+        <field name="name">project.lifecycle.invoice.list</field>
+        <field name="model">project.lifecycle.invoice</field>
+        <field name="arch" type="xml">
+            <list string="Invoices" editable="bottom">
+                <field name="name"/>
+                <field name="due_date"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'draft'"
+                       decoration-warning="state == 'in_payment'"
+                       decoration-success="state == 'paid'"/>
+                <field name="submit_date" optional="show"/>
+                <field name="submit_by" optional="show"/>
+                <field name="approved_date" optional="show"/>
+                <field name="approved_by" optional="show"/>
+                <button name="action_mark_in_payment" type="object"
+                        string="Mark In Payment" icon="fa-arrow-right"
+                        invisible="state != 'draft'"/>
+                <button name="action_mark_paid" type="object"
+                        string="Mark Paid" icon="fa-check"
+                        invisible="state != 'in_payment'"/>
+            </list>
+        </field>
+    </record>
+
+</odoo>

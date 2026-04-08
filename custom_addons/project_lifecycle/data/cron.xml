@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="cron_email_reminders" model="ir.cron">
+        <field name="name">Project Lifecycle: Daily Invoice Reminders</field>
+        <field name="model_id" ref="model_project_lifecycle"/>
+        <field name="state">code</field>
+        <field name="code">model.cron_email_reminders()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="priority">5</field>
+    </record>
+
+</odoo>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Assign Team Wizard -->
+    <record id="view_assign_team_wizard_form" model="ir.ui.view">
+        <field name="name">assign.team.wizard.form</field>
+        <field name="model">assign.team.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Assign Team">
+                <group>
+                    <field name="project_id" readonly="1"/>
+                </group>
+                <group>
+                    <field name="technical_member_ids" widget="many2many_tags"
+                           help="Maximum 5 members"/>
+                    <field name="commercial_member_ids" widget="many2many_tags"
+                           help="Maximum 4 members"/>
+                </group>
+                <footer>
+                    <button name="action_confirm" type="object"
+                            string="Assign &amp; Start" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Transition Wizard -->
+    <record id="view_transition_wizard_form" model="ir.ui.view">
+        <field name="name">transition.wizard.form</field>
+        <field name="model">transition.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Project Transition">
+                <group>
+                    <field name="project_id" readonly="1"/>
+                    <field name="wizard_type" invisible="1"/>
+                </group>
+                <group invisible="wizard_type in ('cancel', 'cancel_after_approval')">
+                    <field name="transition_date" required="wizard_type not in ('cancel', 'cancel_after_approval')"
+                           string="Effective Date"/>
+                </group>
+                <group invisible="wizard_type not in ('cancel', 'cancel_after_approval')">
+                    <field name="cancel_reason"
+                           required="wizard_type in ('cancel', 'cancel_after_approval')"
+                           placeholder="Provide a reason for cancellation..."/>
+                </group>
+                <footer>
+                    <button name="action_confirm" type="object"
+                            string="Confirm" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

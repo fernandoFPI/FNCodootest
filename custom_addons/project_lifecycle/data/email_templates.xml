@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- 1. Project Created — sent to creator -->
+    <record id="email_template_project_created" model="mail.template">
+        <field name="name">Project Lifecycle: Project Created</field>
+        <field name="model_id" ref="model_project_lifecycle"/>
+        <field name="subject">New Project Created: {{ object.name }}</field>
+        <field name="email_to">{{ object.creator_id.email }}</field>
+        <field name="body_html"><![CDATA[
+<div style="font-family: Arial, sans-serif; padding: 20px;">
+    <h2 style="color: #2c3e50;">New Project Created</h2>
+    <p>Dear {{ object.creator_id.name }},</p>
+    <p>A new project has been created and is now pending team assignment.</p>
+    <table style="border-collapse: collapse; width: 100%;">
+        <tr>
+            <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">Project Name</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">{{ object.name }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">Reference</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">{{ object.ref_number or 'Pending' }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">Status</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Pending</td>
+        </tr>
+    </table>
+    <p style="margin-top: 20px; color: #7f8c8d; font-size: 12px;">
+        This is an automated notification from the Project Lifecycle system.
+    </p>
+</div>
+        ]]></field>
+        <field name="auto_delete" eval="True"/>
+    </record>
+
+    <!-- 2. Team Assigned — sent to all technical and commercial members -->
+    <record id="email_template_team_assigned" model="mail.template">
+        <field name="name">Project Lifecycle: Team Assigned</field>
+        <field name="model_id" ref="model_project_lifecycle"/>
+        <field name="subject">You have been assigned to project: {{ object.name }}</field>
+        <field name="email_to">{{
+            ','.join(filter(None, [u.email for u in object.technical_member_ids + object.commercial_member_ids]))
+        }}</field>
+        <field name="body_html"><![CDATA[
+<div style="font-family: Arial, sans-serif; padding: 20px;">
+    <h2 style="color: #1976d2;">Project Team Assignment</h2>
+    <p>You have been assigned as a team member on the following project:</p>
+    <table style="border-collapse: collapse; width: 100%;">
+        <tr>
+            <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">Project Name</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">{{ object.name }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">Reference</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">{{ object.ref_number }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">Status</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Ongoing</td>
+        </tr>
+        <tr>
+            <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">Project Manager</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">{{ object.creator_id.name }}</td>
+        </tr>
+    </table>
+    <p style="margin-top: 20px;">Please log in to the system to review your tasks.</p>
+    <p style="color: #7f8c8d; font-size: 12px;">
+        This is an automated notification from the Project Lifecycle system.
+    </p>
+</div>
+        ]]></field>
+        <field name="auto_delete" eval="True"/>
+    </record>
+
+    <!-- 3. No Invoice Created (cron) — sent to creator and admin group -->
+    <record id="email_template_no_invoice" model="mail.template">
+        <field name="name">Project Lifecycle: No Invoice Created</field>
+        <field name="model_id" ref="model_project_lifecycle"/>
+        <field name="subject">Action Required: No Invoice Created for {{ object.name }}</field>
+        <field name="email_to">{{ object.creator_id.email }}</field>
+        <field name="body_html"><![CDATA[
+<div style="font-family: Arial, sans-serif; padding: 20px;">
+    <h2 style="color: #e65100;">Action Required: No Invoice Created</h2>
+    <p>Dear {{ object.creator_id.name }},</p>
+    <p>
+        The following project is currently in <strong>Invoicing</strong> status
+        but has <strong>no invoice</strong> linked to it.
+        Please create an invoice as soon as possible.
+    </p>
+    <table style="border-collapse: collapse; width: 100%;">
+        <tr>
+            <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">Project Name</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">{{ object.name }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">Reference</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">{{ object.ref_number }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">Invoicing Date</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">{{ object.invoicing_date }}</td>
+        </tr>
+    </table>
+    <p style="margin-top: 20px; color: #7f8c8d; font-size: 12px;">
+        This is an automated reminder from the Project Lifecycle system.
+    </p>
+</div>
+        ]]></field>
+        <field name="auto_delete" eval="True"/>
+    </record>
+
+    <!-- 4. Invoice Due in 14 Days — sent to creator and finance group -->
+    <record id="email_template_invoice_due_14" model="mail.template">
+        <field name="name">Project Lifecycle: Invoice Due in 14 Days</field>
+        <field name="model_id" ref="model_project_lifecycle"/>
+        <field name="subject">Invoice Due in 2 Weeks: {{ object.name }}</field>
+        <field name="email_to">{{ object.creator_id.email }}</field>
+        <field name="body_html"><![CDATA[
+<div style="font-family: Arial, sans-serif; padding: 20px;">
+    <h2 style="color: #f57c00;">Invoice Due in 2 Weeks</h2>
+    <p>Dear {{ object.creator_id.name }},</p>
+    <p>
+        A project invoice is due in <strong>14 days</strong>.
+        Please ensure payment is processed in time.
+    </p>
+    <table style="border-collapse: collapse; width: 100%;">
+        <tr>
+            <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">Project Name</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">{{ object.name }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">Reference</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">{{ object.ref_number }}</td>
+        </tr>
+    </table>
+    <p style="margin-top: 20px; color: #7f8c8d; font-size: 12px;">
+        This is an automated reminder from the Project Lifecycle system.
+    </p>
+</div>
+        ]]></field>
+        <field name="auto_delete" eval="True"/>
+    </record>
+
+    <!-- 5. Invoice Due in 7 Days (URGENT) — sent to creator, finance, and admin -->
+    <record id="email_template_invoice_due_7" model="mail.template">
+        <field name="name">Project Lifecycle: URGENT Invoice Due in 7 Days</field>
+        <field name="model_id" ref="model_project_lifecycle"/>
+        <field name="subject">URGENT: Invoice Due in 1 Week — {{ object.name }}</field>
+        <field name="email_to">{{ object.creator_id.email }}</field>
+        <field name="body_html"><![CDATA[
+<div style="font-family: Arial, sans-serif; padding: 20px;">
+    <h2 style="color: #c62828;">URGENT: Invoice Due in 1 Week</h2>
+    <p>Dear {{ object.creator_id.name }},</p>
+    <p>
+        <strong>URGENT:</strong> A project invoice is due in <strong>7 days</strong>.
+        Immediate action is required to process this payment.
+    </p>
+    <table style="border-collapse: collapse; width: 100%;">
+        <tr>
+            <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">Project Name</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">{{ object.name }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">Reference</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">{{ object.ref_number }}</td>
+        </tr>
+    </table>
+    <p style="margin-top: 20px; font-weight: bold; color: #c62828;">
+        Please take immediate action to avoid delays.
+    </p>
+    <p style="color: #7f8c8d; font-size: 12px;">
+        This is an automated urgent reminder from the Project Lifecycle system.
+    </p>
+</div>
+        ]]></field>
+        <field name="auto_delete" eval="True"/>
+    </record>
+
+</odoo>

@@ -1,0 +1,20 @@
+{
+    'name': 'Project Lifecycle',
+    'version': '1.0.0',
+    'summary': 'Manage full project lifecycle with approval workflow',
+    'author': 'Farage Printing Industries',
+    'category': 'Project',
+    'depends': ['base', 'mail', 'project'],
+    'data': [
+        'security/res_groups.xml',
+        'security/ir.model.access.csv',
+        'data/email_templates.xml',
+        'data/cron.xml',
+        'views/project_lifecycle_invoice_views.xml',
+        'views/wizards.xml',
+        'views/project_lifecycle_views.xml',
+    ],
+    'installable': True,
+    'application': True,
+    'license': 'LGPL-3',
+}

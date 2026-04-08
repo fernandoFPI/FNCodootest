@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         LIST VIEW
+    ═══════════════════════════════════════════════════════════════════ -->
+    <record id="view_project_lifecycle_list" model="ir.ui.view">
+        <field name="name">project.lifecycle.list</field>
+        <field name="model">project.lifecycle</field>
+        <field name="arch" type="xml">
+            <list string="Projects"
+                  decoration-danger="state in ('5','8')"
+                  decoration-success="state == '4'"
+                  decoration-muted="state == '6'">
+                <field name="ref_number"/>
+                <field name="name"/>
+                <field name="state" widget="badge"
+                       decoration-warning="state in ('0','7')"
+                       decoration-info="state == '1'"
+                       decoration-primary="state == '2'"
+                       decoration-success="state in ('3','4')"
+                       decoration-danger="state in ('5','8')"
+                       decoration-muted="state == '6'"/>
+                <field name="creator_id" widget="many2one_avatar_user"/>
+                <field name="submit_date" optional="show"/>
+                <field name="approval_date" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         FORM VIEW
+    ═══════════════════════════════════════════════════════════════════ -->
+    <record id="view_project_lifecycle_form" model="ir.ui.view">
+        <field name="name">project.lifecycle.form</field>
+        <field name="model">project.lifecycle</field>
+        <field name="arch" type="xml">
+            <form string="Project Lifecycle">
+                <header>
+                    <!-- Pending (0) -->
+                    <button name="action_open_assign_team_wizard" type="object"
+                            string="Assign Team" class="btn-primary"
+                            groups="project_lifecycle.group_admin"
+                            invisible="state != '0'"/>
+                    <button name="action_on_hold" type="object"
+                            string="On Hold"
+                            groups="project_lifecycle.group_admin"
+                            invisible="state not in ('0','1')"/>
+                    <button name="action_open_cancel_wizard" type="object"
+                            string="Cancel"
+                            invisible="state not in ('0','1','2')"/>
+
+                    <!-- Ongoing (1) -->
+                    <button name="action_open_submit_wizard" type="object"
+                            string="Submit" class="btn-primary"
+                            invisible="state != '1'"/>
+
+                    <!-- Submitted (2) -->
+                    <button name="action_open_approve_wizard" type="object"
+                            string="Approve" class="btn-primary"
+                            groups="project_lifecycle.group_approver,project_lifecycle.group_admin"
+                            invisible="state != '2'"/>
+                    <button name="action_revise_from_submitted" type="object"
+                            string="Revise"
+                            groups="project_lifecycle.group_admin"
+                            invisible="state != '2'"/>
+
+                    <!-- Approved (3) -->
+                    <button name="action_open_invoicing_wizard" type="object"
+                            string="Move to Invoicing" class="btn-primary"
+                            groups="project_lifecycle.group_admin,project_lifecycle.group_finance"
+                            invisible="state != '3'"/>
+                    <button name="action_revise_from_approved" type="object"
+                            string="Revise"
+                            groups="project_lifecycle.group_admin"
+                            invisible="state != '3'"/>
+                    <button name="action_open_cancel_after_approval_wizard" type="object"
+                            string="Cancel After Approval" class="btn-danger"
+                            groups="project_lifecycle.group_admin"
+                            invisible="state != '3'"/>
+
+                    <!-- On Hold (6) -->
+                    <button name="action_reactivate" type="object"
+                            string="Reactivate" class="btn-primary"
+                            groups="project_lifecycle.group_admin"
+                            invisible="state != '6'"/>
+
+                    <!-- Invoicing (7) -->
+                    <button name="action_open_complete_wizard" type="object"
+                            string="Mark Complete" class="btn-primary"
+                            groups="project_lifecycle.group_admin,project_lifecycle.group_finance"
+                            invisible="state != '7'"/>
+
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="0,1,2,3,7,4"/>
+                </header>
+
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="Project Name..."/>
+                        </h1>
+                        <h4>
+                            <field name="ref_number" readonly="1"/>
+                        </h4>
+                    </div>
+
+                    <notebook>
+                        <!-- General Info -->
+                        <page string="General Info" name="general_info">
+                            <group>
+                                <group string="Details">
+                                    <field name="creator_id" widget="many2one_avatar_user"/>
+                                    <field name="submit_date"/>
+                                    <field name="approval_date"/>
+                                    <field name="invoicing_date"/>
+                                    <field name="complete_date"/>
+                                </group>
+                                <group string="Cancellation"
+                                       invisible="state not in ('5','8')">
+                                    <field name="cancel_date"/>
+                                    <field name="cancel_reason"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <!-- Team Members -->
+                        <page string="Team Members" name="team_members">
+                            <group>
+                                <group string="Technical Members (max 5)">
+                                    <field name="technical_member_ids"
+                                           widget="many2many_tags" nolabel="1"/>
+                                </group>
+                                <group string="Commercial Members (max 4)">
+                                    <field name="commercial_member_ids"
+                                           widget="many2many_tags" nolabel="1"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <!-- Invoices tab (visible when Invoicing or Complete) -->
+                        <page string="Invoices" name="invoices"
+                              invisible="state not in ('7','4')">
+                            <field name="invoice_ids"
+                                   context="{'default_project_id': id}">
+                                <list string="Invoices" editable="bottom">
+                                    <field name="name"/>
+                                    <field name="due_date"/>
+                                    <field name="state" widget="badge"
+                                           decoration-info="state == 'draft'"
+                                           decoration-warning="state == 'in_payment'"
+                                           decoration-success="state == 'paid'"/>
+                                    <field name="submit_date" optional="show"/>
+                                    <field name="submit_by" optional="show"/>
+                                    <field name="approved_date" optional="show"/>
+                                    <field name="approved_by" optional="show"/>
+                                    <button name="action_mark_in_payment" type="object"
+                                            string="Mark In Payment" icon="fa-arrow-right"
+                                            invisible="state != 'draft'"/>
+                                    <button name="action_mark_paid" type="object"
+                                            string="Mark Paid" icon="fa-check"
+                                            invisible="state != 'in_payment'"/>
+                                </list>
+                            </field>
+                        </page>
+
+                        <!-- History -->
+                        <page string="History" name="history">
+                            <field name="history_ids" readonly="1">
+                                <list string="History">
+                                    <field name="date"/>
+                                    <field name="user_id" widget="many2one_avatar_user"/>
+                                    <field name="description"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         KANBAN VIEW
+    ═══════════════════════════════════════════════════════════════════ -->
+    <record id="view_project_lifecycle_kanban" model="ir.ui.view">
+        <field name="name">project.lifecycle.kanban</field>
+        <field name="model">project.lifecycle</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" class="o_kanban_mobile">
+                <field name="state"/>
+                <field name="name"/>
+                <field name="ref_number"/>
+                <field name="creator_id"/>
+                <field name="submit_date"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="oe_kanban_card oe_kanban_global_click">
+                            <div class="o_kanban_card_header">
+                                <strong><field name="name"/></strong>
+                                <small class="text-muted ms-2"><field name="ref_number"/></small>
+                            </div>
+                            <div class="o_kanban_card_body mt-2">
+                                <field name="creator_id" widget="many2one_avatar_user"/>
+                                <div t-if="record.submit_date.value" class="mt-1">
+                                    <i class="fa fa-calendar me-1"/>
+                                    Submitted: <field name="submit_date"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         SEARCH VIEW
+    ═══════════════════════════════════════════════════════════════════ -->
+    <record id="view_project_lifecycle_search" model="ir.ui.view">
+        <field name="name">project.lifecycle.search</field>
+        <field name="model">project.lifecycle</field>
+        <field name="arch" type="xml">
+            <search string="Search Projects">
+                <field name="name"/>
+                <field name="ref_number"/>
+                <field name="creator_id"/>
+                <filter string="Pending"    name="state_pending"    domain="[('state','=','0')]"/>
+                <filter string="Ongoing"    name="state_ongoing"    domain="[('state','=','1')]"/>
+                <filter string="Submitted"  name="state_submitted"  domain="[('state','=','2')]"/>
+                <filter string="Approved"   name="state_approved"   domain="[('state','=','3')]"/>
+                <filter string="Invoicing"  name="state_invoicing"  domain="[('state','=','7')]"/>
+                <filter string="On Hold"    name="state_on_hold"    domain="[('state','=','6')]"/>
+                <filter string="Complete"   name="state_complete"   domain="[('state','=','4')]"/>
+                <filter string="Canceled"   name="state_canceled"   domain="[('state','=','5')]"/>
+                <filter string="Canceled After Approval" name="state_canceled_after"
+                        domain="[('state','=','8')]"/>
+                <separator/>
+                <filter string="My Projects" name="my_projects"
+                        domain="[('creator_id','=',uid)]"/>
+                <separator/>
+                <filter string="Group by Status"       name="group_state"
+                        domain="[]" context="{'group_by': 'state'}"/>
+                <filter string="Group by Creator"      name="group_creator"
+                        domain="[]" context="{'group_by': 'creator_id'}"/>
+                <filter string="Group by Submit Month" name="group_submit_month"
+                        domain="[]" context="{'group_by': 'submit_date:month'}"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         ACTION &amp; MENU
+    ═══════════════════════════════════════════════════════════════════ -->
+    <record id="action_project_lifecycle" model="ir.actions.act_window">
+        <field name="name">Project Lifecycles</field>
+        <field name="res_model">project.lifecycle</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="search_view_id" ref="view_project_lifecycle_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first project lifecycle!
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_project_lifecycle_root"
+              name="Project Lifecycle"
+              sequence="90"/>
+
+    <menuitem id="menu_project_lifecycle_list"
+              name="Projects"
+              parent="menu_project_lifecycle_root"
+              action="action_project_lifecycle"
+              sequence="1"/>
+
+</odoo>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!--
+        Ensure USD, IQD, EUR, GBP are active.
+        noupdate="1" so this only runs on first install.
+    -->
+    <function model="res.currency" name="_activate_po_currencies">
+    </function>
+</odoo>

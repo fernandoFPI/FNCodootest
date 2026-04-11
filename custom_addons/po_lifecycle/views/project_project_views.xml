@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Extend project.lifecycle form to add PO Management tab -->
+    <record id="view_project_lifecycle_form_po" model="ir.ui.view">
+        <field name="name">project.lifecycle.form.po_lifecycle</field>
+        <field name="model">project.lifecycle</field>
+        <field name="inherit_id" ref="project_lifecycle.view_project_lifecycle_form"/>
+        <field name="arch" type="xml">
+            <notebook position="inside">
+                <page string="PO Management" name="po_management">
+                    <!-- Smart buttons row for PO summary -->
+                    <group>
+                        <group string="PO Summary">
+                            <field name="po_count" readonly="1"/>
+                            <field name="po_total_committed" readonly="1"/>
+                        </group>
+                        <group string="Actions">
+                            <button name="action_view_all_pos" type="object"
+                                    string="View All POs" class="btn-secondary"/>
+                            <button name="action_open_po_cost_report" type="object"
+                                    string="PO Cost Report" class="btn-secondary"/>
+                        </group>
+                    </group>
+
+                    <separator string="PO Role Assignments"/>
+                    <field name="po_position_ids"
+                           groups="po_lifecycle.group_po_admin,po_lifecycle.group_superadmin">
+                        <list editable="bottom">
+                            <field name="position_code"/>
+                            <field name="user_id"/>
+                            <field name="employee_id" readonly="1"/>
+                            <field name="active"/>
+                        </list>
+                    </field>
+                    <!-- Readonly view for regular users -->
+                    <field name="po_position_ids" readonly="1"
+                           groups="po_lifecycle.group_user">
+                        <list>
+                            <field name="position_code"/>
+                            <field name="user_id"/>
+                            <field name="employee_id"/>
+                        </list>
+                    </field>
+                </page>
+            </notebook>
+        </field>
+    </record>
+
+</odoo>

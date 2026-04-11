@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_po_lifecycle_root"
+              name="PO Lifecycle"
+              sequence="85"
+              groups="po_lifecycle.group_user,po_lifecycle.group_readonly"/>
+
+    <menuitem id="menu_po_lifecycle_all"
+              name="All POs"
+              parent="menu_po_lifecycle_root"
+              action="action_po_lifecycle"
+              sequence="1"/>
+
+    <menuitem id="menu_po_lifecycle_admin_assignments"
+              name="PO Admin Assignments"
+              parent="menu_po_lifecycle_root"
+              action="action_po_admin_assignment"
+              sequence="10"
+              groups="po_lifecycle.group_superadmin"/>
+
+</odoo>

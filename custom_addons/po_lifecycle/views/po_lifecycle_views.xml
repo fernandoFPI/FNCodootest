@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         LIST VIEW
+    ═══════════════════════════════════════════════════════════════════ -->
+    <record id="view_po_lifecycle_list" model="ir.ui.view">
+        <field name="name">po.lifecycle.list</field>
+        <field name="model">po.lifecycle</field>
+        <field name="arch" type="xml">
+            <list string="PO Lifecycles"
+                  decoration-danger="state == '7'"
+                  decoration-success="state in ('8','5')">
+                <field name="po_number"/>
+                <field name="name"/>
+                <field name="project_id"/>
+                <field name="priority" widget="badge"
+                       decoration-warning="priority == '1'"/>
+                <field name="state" widget="badge"
+                       decoration-muted="state == '0'"
+                       decoration-info="state in ('1','9')"
+                       decoration-warning="state in ('2','22','3')"
+                       decoration-danger="state in ('4','10','7')"
+                       decoration-success="state in ('8','5')"/>
+                <field name="deadline"/>
+                <field name="partner_id" optional="show"/>
+                <field name="approved_date" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         FORM VIEW
+    ═══════════════════════════════════════════════════════════════════ -->
+    <record id="view_po_lifecycle_form" model="ir.ui.view">
+        <field name="name">po.lifecycle.form</field>
+        <field name="model">po.lifecycle</field>
+        <field name="arch" type="xml">
+            <form string="PO Lifecycle">
+                <header>
+                    <!-- Opening -->
+                    <button name="action_submit_to_inventory" type="object"
+                            string="Submit for Inventory Check" class="btn-primary"
+                            invisible="state != '0'"/>
+                    <button name="action_delete_po" type="object"
+                            string="Delete PO" class="btn-danger"
+                            invisible="state not in ('0','1')"/>
+
+                    <!-- Checking Inventory -->
+                    <button name="action_submit_to_store_pricing" type="object"
+                            string="Inventory Checked → Store Pricing" class="btn-primary"
+                            invisible="state != '1'"/>
+
+                    <!-- Store Pricing -->
+                    <button name="action_submit_to_market_pricing" type="object"
+                            string="Store Pricing Complete" class="btn-primary"
+                            invisible="state != '9'"/>
+
+                    <!-- Market Pricing -->
+                    <button name="action_submit_to_price_check" type="object"
+                            string="Submit for Price Verification" class="btn-primary"
+                            invisible="state != '2'"/>
+
+                    <!-- Checking Price -->
+                    <button name="action_submit_to_review" type="object"
+                            string="Submit to Review" class="btn-primary"
+                            invisible="state != '22'"/>
+
+                    <!-- Review -->
+                    <button name="action_reject_to_store_pricing" type="object"
+                            string="Reject → Store Pricing"
+                            invisible="state != '3'"/>
+                    <button name="action_reject_to_market_pricing" type="object"
+                            string="Reject → Market Pricing"
+                            invisible="state != '3'"/>
+                    <button name="action_request_approval" type="object"
+                            string="Request Approval" class="btn-primary"
+                            invisible="state != '3'"/>
+
+                    <!-- Approval stages -->
+                    <button name="action_reject_to_review" type="object"
+                            string="Reject to Review"
+                            invisible="state not in ('4','10')"/>
+                    <button name="action_assign_to_dept" type="object"
+                            string="Assign to Dept"
+                            invisible="state != '4'"/>
+                    <button name="action_admin_approve" type="object"
+                            string="Approve" class="btn-primary"
+                            groups="po_lifecycle.group_po_admin,po_lifecycle.group_superadmin"
+                            invisible="state != '4'"/>
+                    <button name="action_dept_approve" type="object"
+                            string="Dept Approve" class="btn-primary"
+                            invisible="state != '10'"/>
+
+                    <!-- Approved / Complete -->
+                    <button name="action_mark_complete" type="object"
+                            string="Mark Complete" class="btn-primary"
+                            invisible="state != '8'"/>
+
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="0,1,9,2,22,3,4,8,5"/>
+                </header>
+
+                <sheet>
+                    <!-- Smart buttons -->
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_purchase_order" type="object"
+                                class="oe_stat_button" icon="fa-shopping-cart"
+                                invisible="not purchase_order_id">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Linked PO</span>
+                            </div>
+                        </button>
+                    </div>
+
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="PO Title..."/></h1>
+                        <h4>
+                            <field name="po_number" readonly="1"/>
+                            <field name="priority" widget="badge" class="ms-2"/>
+                        </h4>
+                    </div>
+
+                    <group>
+                        <group string="PO Details">
+                            <field name="project_id"/>
+                            <field name="partner_id"/>
+                            <field name="po_currency_id"/>
+                            <field name="open_date"/>
+                            <field name="deadline"/>
+                        </group>
+                        <group string="Approval">
+                            <field name="assigned_dept_head_id" readonly="1"
+                                   invisible="not assigned_dept_head_id"/>
+                            <field name="approved_by" readonly="1"
+                                   invisible="not approved_by"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <!-- Tab 1: Items -->
+                        <page string="Items" name="items">
+                            <field name="item_ids">
+                                <list editable="bottom" optional_columns_show="1">
+                                    <field name="item_desc"/>
+                                    <field name="product_id" optional="hide"/>
+                                    <field name="item_qty"/>
+                                    <field name="item_unit"/>
+                                    <field name="item_note" optional="hide"/>
+                                </list>
+                            </field>
+                        </page>
+
+                        <!-- Tab 2: Inventory -->
+                        <page string="Inventory" name="inventory"
+                              invisible="state == '0'">
+                            <field name="item_ids" readonly="state not in ('1','9')">
+                                <list>
+                                    <field name="item_desc"/>
+                                    <field name="item_qty"/>
+                                    <field name="item_stock_available"/>
+                                    <field name="item_stock_need"/>
+                                    <field name="item_stock_note"/>
+                                </list>
+                            </field>
+                        </page>
+
+                        <!-- Tab 3: Pricing -->
+                        <page string="Pricing" name="pricing"
+                              invisible="state in ('0','1')">
+                            <field name="item_ids">
+                                <list>
+                                    <field name="item_desc"/>
+                                    <field name="currency_usd_id" column_invisible="1"/>
+                                    <field name="currency_iqd_id" column_invisible="1"/>
+                                    <field name="currency_eur_id" column_invisible="1"/>
+                                    <field name="currency_gbp_id" column_invisible="1"/>
+                                    <field name="item_store_price_usd" optional="show"/>
+                                    <field name="item_store_price_iqd" optional="show"/>
+                                    <field name="item_store_price_eur" optional="hide"/>
+                                    <field name="item_store_price_gbp" optional="hide"/>
+                                    <field name="item_price_usd" optional="show"/>
+                                    <field name="item_price_iqd" optional="show"/>
+                                    <field name="item_price_eur" optional="hide"/>
+                                    <field name="item_price_gbp" optional="hide"/>
+                                    <field name="selected_currency_id"/>
+                                </list>
+                            </field>
+                        </page>
+
+                        <!-- Tab 4: Purchase Order -->
+                        <page string="Purchase Order" name="purchase_order">
+                            <group>
+                                <group string="Linked PO">
+                                    <field name="purchase_order_id" readonly="1"/>
+                                    <field name="purchase_order_state" readonly="1"
+                                           invisible="not purchase_order_id"/>
+                                </group>
+                                <group string="Currency Totals">
+                                    <field name="currency_usd_id" invisible="1"/>
+                                    <field name="currency_iqd_id" invisible="1"/>
+                                    <field name="currency_eur_id" invisible="1"/>
+                                    <field name="currency_gbp_id" invisible="1"/>
+                                    <field name="po_total_usd"/>
+                                    <field name="po_total_iqd"/>
+                                    <field name="po_total_eur"/>
+                                    <field name="po_total_gbp"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <!-- Tab 5: History -->
+                        <page string="History" name="history">
+                            <field name="history_ids" readonly="1">
+                                <list>
+                                    <field name="date"/>
+                                    <field name="user_id" widget="many2one_avatar_user"/>
+                                    <field name="state_from"/>
+                                    <field name="state_to"/>
+                                    <field name="description"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         KANBAN VIEW
+    ═══════════════════════════════════════════════════════════════════ -->
+    <record id="view_po_lifecycle_kanban" model="ir.ui.view">
+        <field name="name">po.lifecycle.kanban</field>
+        <field name="model">po.lifecycle</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" class="o_kanban_mobile">
+                <field name="state"/>
+                <field name="po_number"/>
+                <field name="name"/>
+                <field name="project_id"/>
+                <field name="priority"/>
+                <field name="deadline"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="oe_kanban_card oe_kanban_global_click">
+                            <div class="o_kanban_card_header">
+                                <strong><field name="po_number"/></strong>
+                                <field name="priority" widget="badge" class="float-end"/>
+                            </div>
+                            <div class="o_kanban_card_body mt-1">
+                                <field name="name"/>
+                                <div class="text-muted small mt-1">
+                                    <i class="fa fa-folder me-1"/>
+                                    <field name="project_id"/>
+                                </div>
+                                <div t-if="record.deadline.value" class="text-muted small">
+                                    <i class="fa fa-clock-o me-1"/>
+                                    <field name="deadline"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         SEARCH VIEW
+    ═══════════════════════════════════════════════════════════════════ -->
+    <record id="view_po_lifecycle_search" model="ir.ui.view">
+        <field name="name">po.lifecycle.search</field>
+        <field name="model">po.lifecycle</field>
+        <field name="arch" type="xml">
+            <search string="Search PO Lifecycles">
+                <field name="po_number"/>
+                <field name="name"/>
+                <field name="project_id"/>
+                <field name="partner_id"/>
+
+                <!-- State filters -->
+                <filter string="Opening"         name="s0"  domain="[('state','=','0')]"/>
+                <filter string="Checking Inventory" name="s1" domain="[('state','=','1')]"/>
+                <filter string="Store Pricing"   name="s9"  domain="[('state','=','9')]"/>
+                <filter string="Market Pricing"  name="s2"  domain="[('state','=','2')]"/>
+                <filter string="Checking Price"  name="s22" domain="[('state','=','22')]"/>
+                <filter string="Review"          name="s3"  domain="[('state','=','3')]"/>
+                <filter string="Need Approval"   name="s4"  domain="[('state','=','4')]"/>
+                <filter string="Dept Approval"   name="s10" domain="[('state','=','10')]"/>
+                <filter string="Approved"        name="s8"  domain="[('state','=','8')]"/>
+                <filter string="Completed"       name="s5"  domain="[('state','=','5')]"/>
+                <filter string="Deleted"         name="s7"  domain="[('state','=','7')]"/>
+                <separator/>
+                <filter string="Emergency"       name="emergency"
+                        domain="[('priority','=','1')]"/>
+                <filter string="Overdue"         name="overdue"
+                        domain="[('deadline','&lt;', context_today()), ('state','not in',('5','7'))]"/>
+                <filter string="My POs"          name="my_pos"
+                        domain="[('create_uid','=',uid)]"/>
+                <separator/>
+                <filter string="Group by Project" name="group_project"
+                        domain="[]" context="{'group_by': 'project_id'}"/>
+                <filter string="Group by Status"  name="group_state"
+                        domain="[]" context="{'group_by': 'state'}"/>
+                <filter string="Group by Priority" name="group_priority"
+                        domain="[]" context="{'group_by': 'priority'}"/>
+                <filter string="Group by Dept Head" name="group_dept"
+                        domain="[]" context="{'group_by': 'assigned_dept_head_id'}"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_po_lifecycle" model="ir.actions.act_window">
+        <field name="name">PO Lifecycles</field>
+        <field name="res_model">po.lifecycle</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="search_view_id" ref="view_po_lifecycle_search"/>
+        <field name="context">{'search_default_group_project': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first Purchase Order Lifecycle!
+            </p>
+        </field>
+    </record>
+
+</odoo>

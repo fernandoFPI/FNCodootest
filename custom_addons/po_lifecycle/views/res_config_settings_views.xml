@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_res_config_settings_po_lifecycle" model="ir.ui.view">
+        <field name="name">res.config.settings.po_lifecycle</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="PO Lifecycle" string="PO Lifecycle" name="po_lifecycle"
+                     groups="po_lifecycle.group_po_admin,po_lifecycle.group_superadmin">
+
+                    <block title="Administration" name="po_lifecycle_admin_block">
+                        <setting string="Manage PO Admins"
+                                 help="Assign which users administer PO workflows per project.">
+                            <button name="action_manage_po_admins" type="object"
+                                    string="Manage PO Admins" class="btn-secondary"
+                                    groups="po_lifecycle.group_superadmin"/>
+                        </setting>
+                    </block>
+
+                    <block title="Defaults" name="po_lifecycle_defaults_block">
+                        <setting string="Default Vendor"
+                                 help="Fallback vendor used when no vendor is set at approval time.">
+                            <field name="po_lifecycle_default_vendor_id"/>
+                        </setting>
+                        <setting string="Primary Currency"
+                                 help="Main reporting currency for PO totals.">
+                            <field name="po_lifecycle_primary_currency_id"/>
+                        </setting>
+                        <setting string="Secondary Currency"
+                                 help="Secondary reporting currency for PO totals.">
+                            <field name="po_lifecycle_secondary_currency_id"/>
+                        </setting>
+                    </block>
+
+                    <block title="Approval Workflow" name="po_lifecycle_approval_block">
+                        <setting id="po_lifecycle_require_dept_approval"
+                                 string="Require Department Head Approval"
+                                 help="When enabled, POs can be routed to a department head before final admin approval.">
+                            <field name="po_lifecycle_require_dept_approval"/>
+                        </setting>
+                    </block>
+
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

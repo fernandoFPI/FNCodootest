@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_po_admin_assignment_list" model="ir.ui.view">
+        <field name="name">po.admin.assignment.list</field>
+        <field name="model">po.admin.assignment</field>
+        <field name="arch" type="xml">
+            <list string="PO Admin Assignments">
+                <field name="user_id"/>
+                <field name="project_ids" widget="many2many_tags"/>
+                <field name="active"/>
+                <field name="note"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_po_admin_assignment_form" model="ir.ui.view">
+        <field name="name">po.admin.assignment.form</field>
+        <field name="model">po.admin.assignment</field>
+        <field name="arch" type="xml">
+            <form string="PO Admin Assignment">
+                <sheet>
+                    <group>
+                        <field name="user_id"/>
+                        <field name="active"/>
+                    </group>
+                    <group string="Assigned Projects">
+                        <field name="project_ids" widget="many2many_tags" nolabel="1"/>
+                    </group>
+                    <group string="Notes">
+                        <field name="note" nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_po_admin_assignment" model="ir.actions.act_window">
+        <field name="name">PO Admin Assignments</field>
+        <field name="res_model">po.admin.assignment</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

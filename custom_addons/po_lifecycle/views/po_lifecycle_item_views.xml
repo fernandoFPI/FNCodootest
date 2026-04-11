@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Standalone item form for detail view -->
+    <record id="view_po_lifecycle_item_form" model="ir.ui.view">
+        <field name="name">po.lifecycle.item.form</field>
+        <field name="model">po.lifecycle.item</field>
+        <field name="arch" type="xml">
+            <form string="PO Item">
+                <sheet>
+                    <group>
+                        <group string="Item Details">
+                            <field name="item_desc"/>
+                            <field name="product_id"/>
+                            <field name="item_qty"/>
+                            <field name="item_unit"/>
+                            <field name="item_note"/>
+                        </group>
+                        <group string="Inventory">
+                            <field name="item_stock_available"/>
+                            <field name="item_stock_need"/>
+                            <field name="item_stock_note"/>
+                        </group>
+                    </group>
+                    <group string="Store Prices">
+                        <field name="currency_usd_id" invisible="1"/>
+                        <field name="currency_iqd_id" invisible="1"/>
+                        <field name="currency_eur_id" invisible="1"/>
+                        <field name="currency_gbp_id" invisible="1"/>
+                        <field name="item_store_price_usd"/>
+                        <field name="item_store_price_iqd"/>
+                        <field name="item_store_price_eur"/>
+                        <field name="item_store_price_gbp"/>
+                    </group>
+                    <group string="Market Prices">
+                        <field name="item_price_usd"/>
+                        <field name="item_price_iqd"/>
+                        <field name="item_price_eur"/>
+                        <field name="item_price_gbp"/>
+                        <field name="selected_currency_id"/>
+                        <field name="item_price_note"/>
+                    </group>
+                    <separator string="Comments"/>
+                    <field name="comment_ids">
+                        <list editable="bottom">
+                            <field name="comment"/>
+                            <field name="comment_by"/>
+                            <field name="comment_date"/>
+                        </list>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+</odoo>

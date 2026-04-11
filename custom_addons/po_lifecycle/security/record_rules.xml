@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!--
+        Rule 1 — group_user sees only POs they created.
+        Fine-grained position-based visibility is enforced at the
+        Python/transition level; this rule prevents seeing other users'
+        POs entirely unless a higher group is also held.
+    -->
+    <record id="rule_po_lifecycle_user_own" model="ir.rule">
+        <field name="name">PO Lifecycle: User sees own POs</field>
+        <field name="model_id" ref="model_po_lifecycle"/>
+        <field name="groups" eval="[(4, ref('po_lifecycle.group_user'))]"/>
+        <field name="domain_force">[('create_uid', '=', user.id)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!--
+        Rule 2 — group_po_admin: no extra record-level restriction.
+        Project-level scope is enforced in Python (_is_po_admin_for_project).
+        This rule grants full access (bypasses the user rule above).
+    -->
+    <record id="rule_po_lifecycle_po_admin_all" model="ir.rule">
+        <field name="name">PO Lifecycle: PO Admin sees all POs</field>
+        <field name="model_id" ref="model_po_lifecycle"/>
+        <field name="groups" eval="[(4, ref('po_lifecycle.group_po_admin'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <!--
+        Rule 3 — po.admin.assignment: superadmin only.
+        The Python create/write guard also enforces this.
+    -->
+    <record id="rule_po_admin_assignment_superadmin" model="ir.rule">
+        <field name="name">PO Admin Assignment: Superadmin only</field>
+        <field name="model_id" ref="model_po_admin_assignment"/>
+        <field name="groups" eval="[(4, ref('po_lifecycle.group_superadmin'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <!--
+        Rule 4 — po.lifecycle.position: po_admin write restricted.
+        Coarse read access for all; Python enforces project-scope writes.
+    -->
+    <record id="rule_po_lifecycle_position_user_read" model="ir.rule">
+        <field name="name">PO Lifecycle Position: User read all</field>
+        <field name="model_id" ref="model_po_lifecycle_position"/>
+        <field name="groups" eval="[(4, ref('po_lifecycle.group_user'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+</odoo>

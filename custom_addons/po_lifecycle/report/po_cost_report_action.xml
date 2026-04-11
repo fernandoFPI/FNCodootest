@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="action_report_po_cost" model="ir.actions.report">
+        <field name="name">PO Cost Report</field>
+        <field name="model">po.lifecycle</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">po_lifecycle.report_po_cost_template</field>
+        <field name="report_file">po_lifecycle.report_po_cost_template</field>
+        <field name="binding_model_id" ref="model_po_lifecycle"/>
+        <field name="binding_type">report</field>
+        <field name="paperformat_id" ref="base.paperformat_euro"/>
+    </record>
+
+</odoo>

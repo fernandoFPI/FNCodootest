@@ -1,0 +1,22 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_po_lifecycle_superadmin,po.lifecycle superadmin,model_po_lifecycle,po_lifecycle.group_superadmin,1,1,1,1
+access_po_lifecycle_po_admin,po.lifecycle po_admin,model_po_lifecycle,po_lifecycle.group_po_admin,1,1,1,1
+access_po_lifecycle_user,po.lifecycle user,model_po_lifecycle,po_lifecycle.group_user,1,1,1,0
+access_po_lifecycle_readonly,po.lifecycle readonly,model_po_lifecycle,po_lifecycle.group_readonly,1,0,0,0
+access_po_lifecycle_item_superadmin,po.lifecycle.item superadmin,model_po_lifecycle_item,po_lifecycle.group_superadmin,1,1,1,1
+access_po_lifecycle_item_po_admin,po.lifecycle.item po_admin,model_po_lifecycle_item,po_lifecycle.group_po_admin,1,1,1,1
+access_po_lifecycle_item_user,po.lifecycle.item user,model_po_lifecycle_item,po_lifecycle.group_user,1,1,1,0
+access_po_lifecycle_item_readonly,po.lifecycle.item readonly,model_po_lifecycle_item,po_lifecycle.group_readonly,1,0,0,0
+access_po_lifecycle_item_comment_superadmin,po.lifecycle.item.comment superadmin,model_po_lifecycle_item_comment,po_lifecycle.group_superadmin,1,1,1,1
+access_po_lifecycle_item_comment_po_admin,po.lifecycle.item.comment po_admin,model_po_lifecycle_item_comment,po_lifecycle.group_po_admin,1,1,1,1
+access_po_lifecycle_item_comment_user,po.lifecycle.item.comment user,model_po_lifecycle_item_comment,po_lifecycle.group_user,1,1,1,0
+access_po_lifecycle_item_comment_readonly,po.lifecycle.item.comment readonly,model_po_lifecycle_item_comment,po_lifecycle.group_readonly,1,0,0,0
+access_po_lifecycle_history_superadmin,po.lifecycle.history superadmin,model_po_lifecycle_history,po_lifecycle.group_superadmin,1,1,1,1
+access_po_lifecycle_history_user,po.lifecycle.history user,model_po_lifecycle_history,po_lifecycle.group_user,1,1,1,0
+access_po_lifecycle_history_readonly,po.lifecycle.history readonly,model_po_lifecycle_history,po_lifecycle.group_readonly,1,0,0,0
+access_po_lifecycle_position_superadmin,po.lifecycle.position superadmin,model_po_lifecycle_position,po_lifecycle.group_superadmin,1,1,1,1
+access_po_lifecycle_position_po_admin,po.lifecycle.position po_admin,model_po_lifecycle_position,po_lifecycle.group_po_admin,1,1,1,0
+access_po_lifecycle_position_user,po.lifecycle.position user,model_po_lifecycle_position,po_lifecycle.group_user,1,0,0,0
+access_po_admin_assignment_superadmin,po.admin.assignment superadmin,model_po_admin_assignment,po_lifecycle.group_superadmin,1,1,1,1
+access_assign_dept_wizard_user,assign.dept.wizard user,model_assign_dept_wizard,po_lifecycle.group_user,1,1,1,1
+access_po_cost_report_wizard_user,po.cost.report.wizard user,model_po_cost_report_wizard,po_lifecycle.group_user,1,1,1,1

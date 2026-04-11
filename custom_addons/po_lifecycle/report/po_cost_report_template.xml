@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="report_po_cost_template">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <div class="page">
+                    <h2>PO Cost Report</h2>
+                    <t t-set="grand_usd" t-value="0"/>
+                    <t t-set="grand_iqd" t-value="0"/>
+                    <t t-set="grand_eur" t-value="0"/>
+                    <t t-set="grand_gbp" t-value="0"/>
+
+                    <table class="table table-sm table-bordered">
+                        <thead>
+                            <tr class="table-primary">
+                                <th>PO Number</th>
+                                <th>Project</th>
+                                <th>Status</th>
+                                <th>Vendor</th>
+                                <th class="text-end">Total USD</th>
+                                <th class="text-end">Total IQD</th>
+                                <th class="text-end">Total EUR</th>
+                                <th class="text-end">Total GBP</th>
+                                <th>PO Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="docs" t-as="po">
+                                <t t-set="grand_usd" t-value="grand_usd + po.po_total_usd"/>
+                                <t t-set="grand_iqd" t-value="grand_iqd + po.po_total_iqd"/>
+                                <t t-set="grand_eur" t-value="grand_eur + po.po_total_eur"/>
+                                <t t-set="grand_gbp" t-value="grand_gbp + po.po_total_gbp"/>
+                                <tr>
+                                    <td><t t-out="po.po_number"/></td>
+                                    <td><t t-out="po.project_id.name"/></td>
+                                    <td><t t-out="dict(po._fields['state'].selection).get(po.state)"/></td>
+                                    <td><t t-out="po.partner_id.name or '—'"/></td>
+                                    <td class="text-end">
+                                        <t t-out="'{:,.2f}'.format(po.po_total_usd)"/>
+                                    </td>
+                                    <td class="text-end">
+                                        <t t-out="'{:,.0f}'.format(po.po_total_iqd)"/>
+                                    </td>
+                                    <td class="text-end">
+                                        <t t-out="'{:,.2f}'.format(po.po_total_eur)"/>
+                                    </td>
+                                    <td class="text-end">
+                                        <t t-out="'{:,.2f}'.format(po.po_total_gbp)"/>
+                                    </td>
+                                    <td>
+                                        <t t-if="po.purchase_order_id">
+                                            <t t-out="po.purchase_order_id.state"/>
+                                        </t>
+                                        <t t-else="">—</t>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                        <tfoot>
+                            <tr class="table-secondary fw-bold">
+                                <td colspan="4">Grand Total</td>
+                                <td class="text-end">
+                                    <t t-out="'{:,.2f}'.format(grand_usd)"/>
+                                </td>
+                                <td class="text-end">
+                                    <t t-out="'{:,.0f}'.format(grand_iqd)"/>
+                                </td>
+                                <td class="text-end">
+                                    <t t-out="'{:,.2f}'.format(grand_eur)"/>
+                                </td>
+                                <td class="text-end">
+                                    <t t-out="'{:,.2f}'.format(grand_gbp)"/>
+                                </td>
+                                <td/>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                    <p class="text-muted small mt-4">
+                        Generated on <t t-out="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d %H:%M')"/>
+                    </p>
+                </div>
+            </t>
+        </t>
+    </template>
+
+</odoo>

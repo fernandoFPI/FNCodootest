@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!-- Default: require dept approval = True -->
+    <record id="param_require_dept_approval" model="ir.config_parameter">
+        <field name="key">po_lifecycle.require_dept_approval</field>
+        <field name="value">True</field>
+    </record>
+
+</odoo>

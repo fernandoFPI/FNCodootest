@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Assign Dept Head Wizard -->
+    <record id="view_assign_dept_wizard_form" model="ir.ui.view">
+        <field name="name">assign.dept.wizard.form</field>
+        <field name="model">assign.dept.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Assign Department Head">
+                <group>
+                    <field name="po_id" readonly="1"/>
+                    <field name="dept_head_id"/>
+                    <field name="note" placeholder="Optional note to dept head..."/>
+                </group>
+                <footer>
+                    <button name="action_confirm" type="object"
+                            string="Assign" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- PO Cost Report Wizard -->
+    <record id="view_po_cost_report_wizard_form" model="ir.ui.view">
+        <field name="name">po.cost.report.wizard.form</field>
+        <field name="model">po.cost.report.wizard</field>
+        <field name="arch" type="xml">
+            <form string="PO Cost Report">
+                <group>
+                    <field name="project_id"/>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                    <field name="currency_display"/>
+                </group>
+                <footer>
+                    <button name="action_generate" type="object"
+                            string="View Results" class="btn-primary"/>
+                    <button name="action_print_report" type="object"
+                            string="Print PDF" class="btn-secondary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>
